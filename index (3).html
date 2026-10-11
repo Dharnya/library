@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Noolagam - Library App</title>
+<meta name="description" content="Noolagam is a library management demo with login, roles, book issue and return, rental fees and fines.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📚%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500&family=Young+Serif&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#E6EDE7;--panel:#F6F9F5;--ink:#14292C;--mute:#5A6E6B;--line:#C5D3CA;--accent:#1F5C57;--on:#fff;--plank:#9B7B5E;--bad:#A3392B;
+box-sizing:border-box;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px);}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F2326;--panel:#163135;--ink:#E6EEE8;--mute:#93AAA5;--line:#2A4A4D;--accent:#E0B84C;--on:#14292C;--plank:#5A4333;--bad:#F08A78}}
+:root[data-theme="dark"]{--bg:#0F2326;--panel:#163135;--ink:#E6EEE8;--mute:#93AAA5;--line:#2A4A4D;--accent:#E0B84C;--on:#14292C;--plank:#5A4333;--bad:#F08A78}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 Figtree,system-ui,sans-serif}
+.wrap{max-width:980px;margin:0 auto;padding:20px 16px 48px}
+h1,h2{font-family:"Young Serif",Georgia,serif;font-weight:400;margin:0}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+header{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;justify-content:space-between;margin-bottom:20px}
+.brand h1{font-size:32px;line-height:1.1}
+.brand small{color:var(--mute);font-size:14px}
+.ctl{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.seg{display:flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--panel)}
+.seg button{border:0;background:none;padding:6px 16px;border-radius:999px;font-size:14px}
+.seg button[aria-pressed=true]{background:var(--accent);color:var(--on)}
+.pill{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 14px;font-size:14px}
+.stats{color:var(--mute);font-size:14px;margin:0 0 14px}
+.bar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:26px}
+.bar input{flex:1 1 200px;min-width:0;padding:9px 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.chip{border:1px solid var(--line);background:none;border-radius:999px;padding:6px 14px;font-size:14px}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.row{display:flex;align-items:flex-end;gap:5px;padding:0 14px;border-bottom:12px solid var(--plank);margin-bottom:26px;min-height:196px}
+.sp{width:var(--w);height:var(--h);flex:none;background:var(--c);color:var(--t);border:0;border-top:6px solid rgba(0,0,0,.2);border-bottom:6px solid rgba(0,0,0,.2);border-radius:3px 3px 0 0;writing-mode:vertical-rl;font-size:13px;font-weight:500;padding:8px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:relative}
+.sp.dim{opacity:.18}
+.sp.out{opacity:.5;outline:1.5px dashed var(--ink);outline-offset:-5px}
+.sp.on{transform:translateY(-18px)}
+@media (prefers-reduced-motion:no-preference){.sp{transition:transform .2s ease,opacity .2s}.sp:hover{transform:translateY(-8px)}.sp.on:hover{transform:translateY(-18px)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin-bottom:20px}
+.panel h2{font-size:26px;line-height:1.2}
+.meta{color:var(--mute);margin:4px 0 14px}
+.st{display:inline-block;padding:3px 12px;border-radius:999px;font-size:14px;border:1px solid var(--line)}
+.st.late{color:var(--bad);border-color:var(--bad)}
+.acts{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.btn{border:1px solid var(--ink);background:none;border-radius:10px;padding:9px 18px;font-weight:500}
+.btn.p{background:var(--accent);border-color:var(--accent);color:var(--on)}
+.btn.d{border-color:var(--bad);color:var(--bad)}
+.empty{color:var(--mute);margin:0}
+.add{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-top:12px}
+.add input,.add select{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);min-width:0}
+.err{color:var(--bad);font-size:14px;min-height:22px;margin:6px 0 0}
+.led{list-style:none;margin:10px 0 0;padding:0}
+.led li{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line);font-size:15px}
+#toast{position:sticky;bottom:12px;margin:0 auto;width:max-content;max-width:100%;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;font-size:15px;min-height:0;visibility:hidden}
+#toast.show{visibility:visible}
+.login{max-width:400px;margin:7vh auto 0}
+.login .brand{text-align:center;margin-bottom:18px}
+.hint{color:var(--mute);font-size:14px;margin:14px 0 0}
+.dl{display:grid;grid-template-columns:auto 1fr;gap:6px 20px;margin:16px 0 0;font-size:15px}
+.dl dt{color:var(--mute)}
+.dl dd{margin:0;font-weight:500}
+.dl dd.late{color:var(--bad)}
+.ln{display:flex;gap:10px;align-items:center;margin-top:16px}
+.ln select{padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.pv{color:var(--mute);font-size:15px;margin:8px 0 0}
+.det{display:flex;gap:22px;flex-wrap:wrap}
+.info{flex:1 1 240px;min-width:0}
+.cv{width:124px;height:176px;flex:none;background:var(--c);color:var(--t);border-radius:3px 8px 8px 3px;border-left:8px solid rgba(0,0,0,.22);padding:14px 12px;display:flex;flex-direction:column;justify-content:space-between;font-family:"Young Serif",Georgia,serif;font-size:16px;line-height:1.2;overflow:hidden}
+.cv small{font:400 11px/1.3 Figtree,system-ui,sans-serif;opacity:.85}
+.sp.sv::after{content:"";position:absolute;right:5px;top:0;width:7px;height:18px;background:var(--accent)}
+.bar select{padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.btn[aria-pressed=true]{background:var(--ink);color:var(--bg)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin:0 0 22px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.card span{display:block;color:var(--mute);font-size:13px}
+.card b{font:400 26px/1.2 "Young Serif",Georgia,serif}
+.card.warn b{color:var(--bad)}
+.mrow{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-start}
+.ft{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:var(--mute);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section id="auth" hidden>
+  <div class="login">
+    <div class="brand"><h1>Noolagam</h1><small>நூலகம் · your neighbourhood library</small></div>
+    <div class="panel">
+      <div class="seg" role="group" aria-label="Log in or register" style="margin-bottom:16px">
+        <button data-a="tab" data-v="login" aria-pressed="true" style="flex:1">Log in</button>
+        <button data-a="tab" data-v="reg" aria-pressed="false" style="flex:1">Register</button>
+      </div>
+      <div class="add" style="grid-template-columns:1fr;margin-top:0">
+        <input id="an" placeholder="Full name" autocomplete="name" aria-label="Full name" hidden>
+        <input id="ae" type="email" placeholder="name@example.com" autocomplete="email" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Email">
+        <input id="ap" type="password" placeholder="Password, 6 or more characters" autocomplete="current-password" autocapitalize="off" autocorrect="off" spellcheck="false" aria-label="Password">
+      </div>
+      <p class="err" id="aerr" role="alert"></p>
+      <button class="btn p" id="go" data-a="go" style="width:100%">Log in</button>
+      <p class="hint">Try a demo account. New registrations are always members.</p>
+      <div class="acts" style="margin-top:8px">
+        <button class="btn" data-a="demo" data-v="admin">Fill admin demo</button>
+        <button class="btn" data-a="demo" data-v="member">Fill member demo</button>
+      </div>
+    </div>
+  </div>
+</section>
+<div id="app" hidden>
+<header>
+  <div class="brand"><h1>Noolagam</h1><small>நூலகம் · your neighbourhood library</small></div>
+  <div class="ctl">
+    <span class="pill" id="who"></span>
+    <span class="pill" id="day"></span>
+    <button class="pill" data-a="skip">Skip 7 days</button>
+    <button class="pill" data-a="theme" aria-label="Switch light or dark theme">Theme</button>
+    <button class="pill" data-a="logout">Log out</button>
+  </div>
+</header>
+<div class="cards" id="stats"></div>
+<div class="seg" role="group" aria-label="View" style="margin-bottom:22px;width:max-content;max-width:100%">
+  <button data-a="view" data-v="shelf" aria-pressed="true">Library shelf</button>
+  <button data-a="view" data-v="mine" aria-pressed="false" id="tabm">My books</button>
+</div>
+<div id="v-shelf">
+<div class="bar">
+  <input id="q" type="search" placeholder="Search title or author" aria-label="Search books">
+  <div id="chips" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+  <select id="so" aria-label="Sort shelf"><option value="def">Shelf order</option><option value="t">Title A to Z</option><option value="p">Price, low to high</option><option value="a">Available first</option></select>
+  <button class="chip" data-a="rnd">Surprise me</button>
+</div>
+<section id="shelf" aria-label="Bookshelf"></section>
+<section class="panel" id="detail" aria-live="polite"></section>
+<section id="admin"></section>
+</div>
+<section id="mine" hidden></section>
+<footer class="ft">Noolagam · Library management demo · Built with HTML, CSS and JavaScript</footer>
+<div id="toast" role="status"></div>
+</div>
+</div>
+<script>
+const KEY="noolagam-v3",PAL=["#7E9C86","#D4A83F","#8A5A7B","#587A99","#B5654A","#4E7F7A","#9A8F6A","#6B6FA0"],FINE=2,LOAN=14;
+const GEN=["Fiction","Classics","History","Science","Tech","Self-help"];
+const seed=()=>[
+["Ponniyin Selvan","Kalki Krishnamurthy","History"],["Wings of Fire","A. P. J. Abdul Kalam","Self-help"],["The Alchemist","Paulo Coelho","Fiction"],
+["Sapiens","Yuval Noah Harari","History"],["Clean Code","Robert C. Martin","Tech"],["Cosmos","Carl Sagan","Science"],
+["Godaan","Premchand","Fiction"],["Atomic Habits","James Clear","Self-help"],["A Brief History of Time","Stephen Hawking","Science"],
+["The Pragmatic Programmer","Hunt and Thomas","Tech"],["Train to Pakistan","Khushwant Singh","Fiction"],["India After Gandhi","Ramachandra Guha","History"],
+["Thirukkural","Thiruvalluvar","Classics"],["Silappatikaram","Ilango Adigal","Classics"],["Gitanjali","Rabindranath Tagore","Classics"],
+["Parthiban Kanavu","Kalki Krishnamurthy","Fiction"],["Malgudi Days","R. K. Narayan","Fiction"],["The God of Small Things","Arundhati Roy","Fiction"],
+["Midnight's Children","Salman Rushdie","Fiction"],["The Discovery of India","Jawaharlal Nehru","History"],["Ikigai","Garcia and Miralles","Self-help"],
+["Deep Work","Cal Newport","Self-help"],["The Selfish Gene","Richard Dawkins","Science"],["Surely You're Joking, Mr. Feynman","Richard Feynman","Science"],
+["Introduction to Algorithms","Cormen and others","Tech"],["Eloquent JavaScript","Marijn Haverbeke","Tech"]
+].map((b,i)=>mk(b[0],b[1],b[2],i));
+function mk(t,a,g,i,p){p=p||Math.round((150+(t.length*37+i*23)%350)/10)*10;return{id:Date.now()+i+Math.floor(Math.random()*999),t,a,g,c:PAL[(t.length+i)%PAL.length],h:150+(t.length*7)%46,w:34+(t.length*3)%12,p,r:Math.max(2,Math.round(p*.02)),out:false,due:0,iss:0,days:14}}
+let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){S=null}
+S=S||{books:seed(),day:0,fines:0,role:"member",sel:null,q:"",g:"All",user:null,rent:0,sort:"def",saved:[]};
+try{S.user=JSON.parse(sessionStorage.getItem(KEY+"-u"))}catch(e){S.user=null}
+S.role=S.user?S.user.role:"member";
+const UK="noolagam-users";let U,mode="login";
+try{U=JSON.parse(localStorage.getItem(UK))}catch(e){U=null}
+const saveU=()=>{try{localStorage.setItem(UK,JSON.stringify(U))}catch(e){}};
+const H=async s=>{try{const d=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return[...new Uint8Array(d)].map(x=>x.toString(16).padStart(2,"0")).join("")}catch(e){return btoa(unescape(encodeURIComponent(s)))}};
+function authUI(){
+  document.querySelectorAll("[data-a=tab]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===mode));
+  $("an").hidden=mode!=="reg";$("go").textContent=mode==="reg"?"Create account":"Log in";$("aerr").textContent="";
+  $("ap").autocomplete=mode==="reg"?"new-password":"current-password"}
+async function doAuth(){
+  const e=$("ae").value.trim().toLowerCase(),p=$("ap").value,n=$("an").value.trim(),er=$("aerr");
+  if(!/^\S+@\S+\.\S+$/.test(e)){er.textContent="Enter a valid email address.";return}
+  if(p.length<6){er.textContent="Password needs at least 6 characters.";return}
+  const h=await H(p);let u=U.find(x=>x.email===e);
+  if(mode==="reg"){
+    if(!n){er.textContent="Enter your name.";return}
+    if(u){er.textContent="That email is already registered. Log in instead.";return}
+    u={email:e,name:n,role:"member",p:h};U.push(u);saveU()
+  }else if(!u||u.p!==h){er.textContent="Email or password is incorrect.";return}
+  S.user={email:u.email,name:u.name,role:u.role};S.role=u.role;S.sel=null;er.textContent="";$("ap").value="";save();render();toast("Welcome, "+u.name)}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(Object.assign({},S,{user:null})));sessionStorage.setItem(KEY+"-u",JSON.stringify(S.user))}catch(e){}};
+const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=d=>new Date(Date.now()+d*864e5).toLocaleDateString("en-IN",{day:"numeric",month:"short"});
+const lum=h=>{const n=parseInt(h.slice(1),16);return(.299*(n>>16)+.587*(n>>8&255)+.114*(n&255))/255};
+const late=b=>b.out&&S.day>b.due?S.day-b.due:0;
+const kv=a=>`<dl class="dl">${a.map(x=>`<dt>${x[0]}</dt><dd${x[2]?' class="late"':""}>${x[1]}</dd>`).join("")}</dl>`;
+function prev(){const b=S.books.find(x=>x.id===S.sel),s=$("ln");if(!b||!s)return;const d=+s.value;$("pv").textContent="Return by "+fmt(S.day+d)+" · rental fee ₹"+b.r*d}
+let tt;function toast(m){const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),3200)}
+function render(){
+  $("auth").hidden=!!S.user;$("app").hidden=!S.user;
+  if(!S.user)return;
+  $("who").textContent=S.user.name+" · "+(S.role==="admin"?"Admin":"Member");
+  const mv=S.view==="mine";$("v-shelf").hidden=mv;$("mine").hidden=!mv;
+  $("tabm").textContent=S.role==="admin"?"Issued books":"My books";
+  document.querySelectorAll("[data-a=view]").forEach(x=>x.setAttribute("aria-pressed",(x.dataset.v==="mine")===mv));
+  const io=S.books.filter(x=>x.out);
+  $("mine").innerHTML=io.length?io.map(x=>`<div class="panel"><div class="mrow"><div><h2 style="font-size:20px">${esc(x.t)}</h2><p class="meta" style="margin:2px 0 0">${esc(x.a)}</p></div><div style="text-align:right"><span class="st${late(x)?" late":""}">${late(x)?"Overdue "+late(x)+" day"+(late(x)>1?"s":""):"Return by "+fmt(x.due)}</span><p class="meta" style="margin:6px 0 0">Rental ₹${x.r*x.days}${late(x)?" · fine ₹"+late(x)*FINE:""}</p></div></div><div class="acts"><button class="btn p" data-a="rt" data-id="${x.id}">Return book</button></div></div>`).join(""):'<div class="panel"><p class="empty">No books are issued right now. Pick one from the shelf and it will show up here.</p></div>';
+  const out=S.books.filter(b=>b.out).length;
+  const od=S.books.filter(x=>late(x)).length,cd=[["Books",S.books.length],["Available",S.books.length-out],["Issued",out],["Overdue",od,od>0]];
+  if(S.role==="admin")cd.push(["Collected","₹"+((S.rent||0)+S.fines)]);
+  $("stats").innerHTML=cd.map(c=>`<div class="card${c[2]?" warn":""}"><span>${c[0]}</span><b>${c[1]}</b></div>`).join("");
+  $("day").textContent="Day "+S.day+" · "+fmt(S.day);
+  document.querySelectorAll("[data-a=role]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.role));
+  $("so").value=S.sort||"def";$("chips").innerHTML=["All","Saved",...GEN].map(g=>`<button class="chip" data-a="genre" data-v="${g}" aria-pressed="${S.g===g}">${g}</button>`).join("");
+  const per=Math.max(4,Math.floor(($("shelf").clientWidth-28)/(5+44))),q=S.q.toLowerCase();let h="";
+  const L=S.books.slice().sort(S.sort==="t"?(x,y)=>x.t.localeCompare(y.t):S.sort==="p"?(x,y)=>x.p-y.p:S.sort==="a"?(x,y)=>x.out-y.out:()=>0);
+  for(let i=0;i<L.length;i+=per){
+    h+='<div class="row">'+L.slice(i,i+per).map(b=>{
+      const hit=(!q||(b.t+b.a).toLowerCase().includes(q))&&(S.g==="All"||b.g===S.g||(S.g==="Saved"&&(S.saved||[]).includes(b.id)));
+      return`<button class="sp${hit?"":" dim"}${b.out?" out":""}${S.sel===b.id?" on":""}${(S.saved||[]).includes(b.id)?" sv":""}" data-a="sel" data-id="${b.id}" title="${esc(b.t)} · ₹${b.p}" style="--c:${b.c};--h:${b.h}px;--w:${b.w+8}px;--t:${lum(b.c)>.55?"#14292C":"#F4F7F2"}" aria-label="${esc(b.t)} by ${esc(b.a)}${b.out?", issued":""}">${esc(b.t)}</button>`}).join("")+"</div>"}
+  $("shelf").innerHTML=h||'<p class="empty">The shelf is empty.</p>';
+  const b=S.books.find(x=>x.id===S.sel);
+  if(!b){$("detail").innerHTML='<p class="empty">Pick a spine from the shelf to see its details. Dashed spines are already issued.</p>'}
+  else{const l=late(b),adm=S.role==="admin",sv=(S.saved||[]).includes(b.id);
+    $("detail").innerHTML=`<div class="det"><div class="cv" style="--c:${b.c};--t:${lum(b.c)>.55?"#14292C":"#F4F7F2"}"><span>${esc(b.t)}</span><small>${esc(b.a)}</small></div><div class="info"><h2>${esc(b.t)}</h2><p class="meta">${esc(b.a)} · ${esc(b.g)}</p>`+
+    (b.out?`<span class="st${l?" late":""}">${l?"Overdue by "+l+" day"+(l>1?"s":""):"Issued"}</span>`:`<span class="st">On the shelf</span>`)+
+    kv([["Book price","₹"+b.p],["Rental fee","₹"+b.r+" per day"]].concat(b.out?[["Issued on",fmt(b.iss)],["Return by",fmt(b.due),l],["Loan period",b.days+" days"],["Rental paid","₹"+b.r*b.days],["Fine so far","₹"+l*FINE,l]]:[]))+
+    (b.out?"":`<div class="ln"><label for="ln">Loan period</label><select id="ln"><option value="7">7 days</option><option value="14" selected>14 days</option><option value="21">21 days</option></select></div><p class="pv" id="pv"></p>`)+
+    `<div class="acts">`+(b.out?`<button class="btn p" data-a="ret">${adm?"Mark returned":"Return book"}</button>`:`<button class="btn p" data-a="iss">${adm?"Issue to a member":"Issue to me"}</button>`)+`<button class="btn" data-a="sv" aria-pressed="${sv}">${sv?"Saved":"Save for later"}</button>`+(adm?`<button class="btn d" data-a="del">Remove book</button>`:"")+`</div></div></div>`;if(!b.out)prev()}
+  const ad=$("admin");
+  if(S.role!=="admin"){ad.innerHTML="";return}
+  const o=S.books.filter(x=>x.out);
+  ad.innerHTML=`<div class="panel"><h2>Add a book</h2><div class="add"><input id="nt" placeholder="Title" aria-label="Title"><input id="na" placeholder="Author" aria-label="Author"><input id="np" type="number" min="10" placeholder="Price in ₹" aria-label="Price in rupees"><select id="ng" aria-label="Genre">${GEN.map(g=>`<option>${g}</option>`).join("")}</select></div><p class="err" id="err"></p><button class="btn p" data-a="add">Add to shelf</button></div>
+  <div class="panel"><h2>Issue ledger</h2>${o.length?`<ul class="led">${o.map(x=>`<li><span>${esc(x.t)}</span><span${late(x)?' style="color:var(--bad)"':""}>${late(x)?"Overdue "+late(x)+"d · fine ₹"+late(x)*FINE:"Return by "+fmt(x.due)}</span></li>`).join("")}</ul>`:'<p class="empty" style="margin-top:8px">No books are out right now.</p>'}</div>`}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-a]");if(!t)return;const a=t.dataset.a,b=S.books.find(x=>x.id===S.sel);
+  if(a==="tab"){mode=t.dataset.v;authUI();return}
+  if(a==="view"){S.view=t.dataset.v;save();render();return}
+  if(a==="rt"){const x=S.books.find(y=>y.id===+t.dataset.id);if(x){const f=late(x)*FINE;S.fines+=f;x.out=false;toast(f?"Returned late. Fine of ₹"+f+" collected.":"Returned on time. No fine.")}save();render();return}
+  if(a==="demo"){mode="login";authUI();$("ae").value=t.dataset.v+"@noolagam.in";$("ap").value=t.dataset.v+"123";return}
+  if(a==="go"){doAuth().catch(x=>{$("aerr").textContent="Something went wrong: "+x.message});return}
+  if(a==="logout"){S.user=null;S.sel=null;save();authUI();render();return}
+  if(a==="sel")S.sel=S.sel==+t.dataset.id?null:+t.dataset.id;
+  else if(a==="role"){S.role=t.dataset.v}
+  else if(a==="genre")S.g=t.dataset.v;
+  else if(a==="rnd"){const c=S.books.filter(x=>!x.out);if(!c.length){toast("Every book is out right now.");return}const r=c[Math.floor(Math.random()*c.length)];S.sel=r.id;S.g="All";S.q="";$("q").value="";toast("How about "+r.t+"?")}
+  else if(a==="sv"&&b){S.saved=S.saved||[];const i=S.saved.indexOf(b.id);if(i<0)S.saved.push(b.id);else S.saved.splice(i,1);toast(i<0?"Saved for later":"Removed from saved")}
+  else if(a==="skip"){S.day+=7;toast("Moved ahead 7 days. Overdue books add ₹"+FINE+" a day.")}
+  else if(a==="theme"){const r=document.documentElement,d=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme:dark)").matches;r.dataset.theme=d?"light":"dark";return}
+  else if(a==="iss"&&b){const d=+$("ln").value||LOAN;b.out=true;b.iss=S.day;b.days=d;b.due=S.day+d;S.rent=(S.rent||0)+b.r*d;toast("Issued. Return by "+fmt(b.due)+" · rental ₹"+b.r*d)}
+  else if(a==="ret"&&b){const f=late(b)*FINE;S.fines+=f;b.out=false;toast(f?"Returned late. Fine of ₹"+f+" collected.":"Returned on time. No fine.")}
+  else if(a==="del"&&b){if(b.out){toast("Return this book before removing it.")}else{S.books=S.books.filter(x=>x!==b);S.sel=null;toast("Book removed")}}
+  else if(a==="add"){const n=$("nt").value.trim(),au=$("na").value.trim();
+    if(!n||!au){$("err").textContent="Enter both a title and an author.";return}
+    if(!(+$("np").value>=10)){$("err").textContent="Enter the book price in rupees (10 or more).";return}
+    const nb=mk(n,au,$("ng").value,S.books.length,Math.round(+$("np").value));S.books.push(nb);S.sel=nb.id;toast("Added to the shelf")}
+  save();render();
+  if(a==="rnd"||(a==="sel"&&S.sel))$("detail").scrollIntoView({block:"nearest",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})});
+$("q").addEventListener("input",e=>{S.q=e.target.value;render()});
+document.addEventListener("change",e=>{if(e.target.id==="ln")prev()});
+$("so").addEventListener("change",e=>{S.sort=e.target.value;save();render()});
+addEventListener("resize",render);
+["an","ae","ap"].forEach(id=>$(id).addEventListener("keydown",e=>{if(e.key==="Enter")doAuth().catch(x=>{$("aerr").textContent="Something went wrong: "+x.message})}));
+(async()=>{
+  if(!Array.isArray(U))U=[];
+  for(const d of [["admin@noolagam.in","Head librarian","admin","admin123"],["member@noolagam.in","Priya","member","member123"]]){
+    const h=await H(d[3]),x=U.find(u=>u.email===d[0]);
+    if(x){x.p=h;x.role=d[2]}else U.push({email:d[0],name:d[1],role:d[2],p:h})}
+  saveU();authUI();render()})();
+</script>
+</body>
+</html>
